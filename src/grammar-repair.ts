@@ -187,7 +187,10 @@ export function repairAssistantMessageGrammarLeaks(
     const text = getPartText(part);
     if (text === undefined) return part;
 
-    const candidates = selectCandidates(parseToolGrammarCandidates(text, enabled))
+    const candidates = selectCandidates(parseToolGrammarCandidates(text, enabled)).map(candidate => {
+      for(const t of knownTools)if(candidate.name.startsWith(t))candidate.name = t;
+      return candidate;
+    })
       .filter((candidate) => candidate.stripOnly || isAllowedTool(candidate.name, config, knownTools));
 
     if (candidates.length === 0) return part;
